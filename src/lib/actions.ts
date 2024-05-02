@@ -192,9 +192,7 @@ export const authenticate = async (prevState, formData: FormData) => {
       email,
       password,
     });
-    console.log("login", login);
   } catch (error) {
-    console.log(error);
     throw error;
   }
 };
