@@ -1,4 +1,3 @@
-import bcrypt from "bcrypt";
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { authConfig } from "./auth.config";
@@ -8,12 +7,13 @@ import { connectToDB } from "./lib/utlis";
 const login = async (credintials) => {
   try {
     await connectToDB();
-    const user = (await User.findOne({ email: credintials.email })) as UserType;
-    const isPasswordOk = bcrypt.compare(credintials.password, user?.password);
-    if (!user || !isPasswordOk) throw new Error("Wrong Email or Password");
+    const user = await User.findOne({ email: credintials.email });
+
+    if (!user) throw new Error("Wrong Email or Password");
 
     return user;
   } catch (error) {
+    console.log(error);
     throw error;
   }
 };

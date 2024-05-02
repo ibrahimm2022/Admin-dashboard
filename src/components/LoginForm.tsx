@@ -4,6 +4,7 @@ import { useFormState } from "react-dom";
 
 const LoginForm = () => {
   const [state, formAction] = useFormState(authenticate, undefined);
+  
   return (
     <form
       action={formAction}

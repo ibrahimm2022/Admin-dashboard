@@ -188,8 +188,13 @@ export const updateProduct = async (formData: FormData, media: string[]) => {
 export const authenticate = async (prevState, formData: FormData) => {
   const { email, password } = Object.fromEntries(formData);
   try {
-    await signIn("credentials", { email, password });
+    const login = await signIn("credentials", {
+      email,
+      password,
+    });
+    console.log("login", login);
   } catch (error) {
-    return "email or password is uncorrect";
+    console.log(error);
+    throw error;
   }
 };
