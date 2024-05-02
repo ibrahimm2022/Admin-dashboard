@@ -1,5 +1,6 @@
 "use server";
 
+import { signIn } from "@/auth";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { Product } from "./model/productModel";
@@ -18,7 +19,6 @@ export const addUser = async (formData: FormData) => {
   try {
     await connectToDB();
 
-    console.log({ username, password, phone, email, role, address });
     const newUser = new User({
       username,
       password,
@@ -56,8 +56,7 @@ interface UpdateUserFields {
   address: FormDataEntryValue;
   [key: string]: FormDataEntryValue;
 }
-export const updateUser = async (formData: FormData) => {
-  "use server";
+export const updateUser = async (formData: FormData, avatar: any[]) => {
   const {
     id,
     username,
@@ -67,7 +66,6 @@ export const updateUser = async (formData: FormData) => {
     role,
     address,
   } = Object.fromEntries(formData);
-
   const updateFields: UpdateUserFields = {
     username,
     password,
@@ -76,21 +74,16 @@ export const updateUser = async (formData: FormData) => {
     role,
     address,
   };
+
   for (const key in updateFields) {
     if (updateFields[key] === "" || updateFields[key] === undefined) {
       delete updateFields[key];
     }
   }
-  // Object.keys(updateFields).forEach((key:  UpdateFields) => {
-  //   return (
-  //     (updateFields[key] === "" || updateFields[key] === undefined) &&
-  //     delete updateFields[key]
-  //   );
-  // });
 
   try {
     await connectToDB();
-    await User.findByIdAndUpdate(id, updateFields);
+    await User.findByIdAndUpdate(id, { ...updateFields, avatar });
   } catch (error) {
     console.log(error);
     throw new Error("falid add user");
@@ -152,9 +145,10 @@ interface UpdateProductFields {
   stock: FormDataEntryValue;
   size: FormDataEntryValue;
   category: FormDataEntryValue;
+
   [index: string]: FormDataEntryValue;
 }
-export const updateProduct = async (formData: FormData) => {
+export const updateProduct = async (formData: FormData, media: string[]) => {
   const {
     id,
     title,
@@ -180,18 +174,22 @@ export const updateProduct = async (formData: FormData) => {
       delete updateFields[key];
     }
   }
-  // Object.keys(updateFields).filter(
-  //   (key: string) =>
-  //     (updateFields[key] === "" || updateFields[key] === undefined) &&
-  //     delete updateFields[key]
-  // );
-  console.log(updateFields);
+
   try {
     await connectToDB();
-    await Product.findByIdAndUpdate(id, updateFields);
+    await Product.findByIdAndUpdate(id, { ...updateFields, media });
   } catch (error) {
     console.log("UdatePtoduct", error);
   }
   revalidatePath("/dashboard/products");
   redirect("/dashboard/products");
+};
+
+export const authenticate = async (prevState, formData: FormData) => {
+  const { email, password } = Object.fromEntries(formData);
+  try {
+    await signIn("credentials", { email, password });
+  } catch (error) {
+    return "email or password is uncorrect";
+  }
 };

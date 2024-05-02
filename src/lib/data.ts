@@ -26,7 +26,7 @@ export const getUser = async (id: string) => {
 
     const user = await User.findById(id);
 
-    return user;
+    return JSON.stringify(user);
   } catch (error) {
     console.log(error);
     throw new Error("faild to fetch!");
@@ -51,12 +51,12 @@ export const getProducts = async (q: string, page: number) => {
   }
 };
 
-export const getProduct = async(id :string) => {
+export const getProduct = async (id: string) => {
   try {
-    await  connectToDB();
+    await connectToDB();
     const product = await Product.findById(id);
-    return product
+    return JSON.stringify(product);
   } catch (error) {
-    console.log("Get Product",error);
+    console.log("Get Product", error);
   }
-}
+};

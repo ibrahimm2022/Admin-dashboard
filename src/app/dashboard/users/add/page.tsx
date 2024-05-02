@@ -13,7 +13,6 @@ const AddUserPage = () => {
         required
         className="w-[45%] mb-5 py-3 px-4 border-[#23374a] bg-primary border-2 focus-visible:outline-none text-sm  "
       />
-
       <input
         type="email"
         placeholder="Email"
